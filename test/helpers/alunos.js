@@ -1,7 +1,7 @@
 import request from 'supertest';
 
 export async function createStudent(app, alunoObject, loginResponse) {
-    return await request('http://localhost:3000')
+    return await request(app)
         .post('/api/admin/alunos')
         .set('Content-Type', 'application/json')
         .set('Authorization', `Bearer ${loginResponse.body.token}`)
