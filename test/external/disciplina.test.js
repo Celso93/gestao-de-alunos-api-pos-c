@@ -9,8 +9,8 @@ import { alunosFixture } from '../fixtures/alunos.js';
 
 describe('Disciplinas', () => {
 
-    let loginResponse;
-    let alunoResponse;
+    let loginResponse, alunoResponse;
+
     beforeEach(async () => {
         loginResponse = await loginUser('http://localhost:3000', 'admin@escola.com', 'admin123');
         alunoResponse = await createStudent('http://localhost:3000', alunosFixture.aleatorio(), loginResponse);

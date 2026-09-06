@@ -8,6 +8,7 @@ import { alunosFixture } from '../fixtures/alunos.js';
 describe('Alunos', () => {
 
   let loginResponse;
+
   beforeEach(async () => {
     loginResponse = await loginUser(app, 'admin@escola.com', 'admin123');
   });
