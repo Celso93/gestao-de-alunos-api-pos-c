@@ -93,6 +93,31 @@ npm run dev
 O servidor sobe por padrão em `http://localhost:3000` (pode ser alterado com a variável de
 ambiente `PORT`).
 
+## Testes
+
+Os testes automatizados usam **Mocha** + **Chai** + **Supertest** e estão organizados em
+`test/`:
+
+- `test/internal/` — testes que sobem o `app` Express em processo (não precisam do servidor
+  rodando).
+- `test/external/` — testes de ponta a ponta contra `http://localhost:3000`; **exigem o servidor
+  no ar** (`npm start` em outro terminal).
+- `test/helpers/` — funções reutilizáveis (`loginUser`, `createStudent`).
+- `test/fixtures/` — massa de dados. `alunosFixture.aleatorio()` é uma **factory**: gera um aluno
+  com `email`/`matricula` únicos a cada chamada, evitando conflito `409`. `alunosFixture.alunoFixo`
+  é o aluno pré-cadastrado, usado para cenários de duplicidade.
+
+```bash
+# todos os testes
+npm run tests
+
+# apenas os internos (não precisa do servidor)
+npm run tests:internal
+
+# apenas os externos (com o servidor rodando: npm start)
+npm run tests:external
+```
+
 ## Documentação da API (Swagger)
 
 A documentação completa de todas as rotas, parâmetros, corpos de requisição e respostas está
