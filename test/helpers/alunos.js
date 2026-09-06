@@ -1,9 +1,9 @@
-import request from 'supertest';
+import { api } from './api.js'
 
-export async function createStudent(app, alunoObject, loginResponse) {
-    return await request(app)
+export async function createStudent(alunoObject, loginResponse) {
+    return await api()
         .post('/api/admin/alunos')
         .set('Content-Type', 'application/json')
-        .set('Authorization', `Bearer ${loginResponse.body.token}`)
+        .set('Authorization', `${loginResponse}`)
         .send(alunoObject)
 }
