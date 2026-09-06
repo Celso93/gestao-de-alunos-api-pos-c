@@ -13,11 +13,11 @@ describe('Alunos', () => {
   });
 
   it('should sign up a new student', async () => {
-    const aluno = alunosFixture.aleatorio;
+    const aluno = alunosFixture.aleatorio();
     const alunoResponse = await createStudent(app, aluno, loginResponse);
 
     expect(alunoResponse.status).to.equal(201);
-    expect(alunoResponse.body).to.have.property('nome', 'Ana Souza');
+    expect(alunoResponse.body).to.have.property('nome', aluno.nome);
     expect(alunoResponse.body).to.have.property('role', 'aluno');
   })
 

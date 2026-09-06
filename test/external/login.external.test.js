@@ -11,7 +11,7 @@ describe('Alunos', () => {
   });
 
   it('should sign up a new student', async () => {
-    const aluno = alunosFixture.aleatorio;
+    const aluno = alunosFixture.aleatorio();
     const alunoResponse = await createStudent('http://localhost:3000', aluno, loginResponse);
 
     expect(alunoResponse.status).to.equal(201);
