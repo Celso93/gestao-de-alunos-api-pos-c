@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import { comTokenDoAdmin } from '../helpers/auth.js';
 import { createStudent } from '../helpers/alunos.js';
 import { alunosFixture } from '../fixtures/alunos.js';
+import { novoAluno } from '../factories/alunosFactory.js';
 
 
 describe('Alunos', () => {
@@ -14,7 +15,7 @@ describe('Alunos', () => {
   });
 
   it('should sign up a new student', async () => {
-    const aluno = alunosFixture.aleatorio();
+    const aluno = novoAluno();
     const alunoResponse = await createStudent(aluno, authorization, app);
 
     expect(alunoResponse.status).to.equal(201);
