@@ -2,35 +2,34 @@ import app from '../../src/app.js';
 import { expect } from 'chai';
 import request from 'supertest';
 
-import { loginUser } from '../helpers/auth.js';
+import { comTokenDoAdmin } from '../helpers/auth.js';
 import { createStudent } from '../helpers/alunos.js';
 import { alunosFixture } from '../fixtures/alunos.js';
 
 
 describe('Disciplinas', () => {
 
-    let loginResponse, alunoResponse, aluno;
+    let authorization, alunoResponse, aluno;
 
     beforeEach(async () => {
-        loginResponse = await loginUser(app, 'admin@escola.com', 'admin123');
-        const token = loginResponse.body.token;
+        authorization = await comTokenDoAdmin(app);
 
         aluno = alunosFixture.aleatorio();
 
         // gestão de dados (pré-condição): se o aluno já existe, apaga antes de recriar
         const listaResponse = await request(app)
             .get('/api/admin/alunos')
-            .set('Authorization', `Bearer ${token}`);
+            .set('Authorization', authorization);
 
         const alunoExistente = listaResponse.body.find((a) => a.email === aluno.email);
 
         if (alunoExistente) {
             await request(app)
                 .delete(`/api/admin/alunos/${alunoExistente.id}`)
-                .set('Authorization', `Bearer ${token}`);
+                .set('Authorization', authorization);
         }
 
-        alunoResponse = await createStudent(app, aluno, loginResponse);
+        alunoResponse = await createStudent(aluno, authorization, app);
     });
 
     afterEach(async () => {
@@ -38,7 +37,7 @@ describe('Disciplinas', () => {
         if (alunoResponse?.body?.id) {
             await request(app)
                 .delete(`/api/admin/alunos/${alunoResponse.body.id}`)
-                .set('Authorization', `Bearer ${loginResponse.body.token}`);
+                .set('Authorization', authorization);
         }
     });
 
@@ -46,7 +45,7 @@ describe('Disciplinas', () => {
         const disciplinaResponse = await request(app)
             .post('/api/admin/disciplinas')
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${loginResponse.body.token}`)
+            .set('Authorization', authorization)
             .expect(201)
             .send({
                 nome: `Matemática${Date.now()}`,
@@ -57,7 +56,7 @@ describe('Disciplinas', () => {
         const matriculaResponse = await request(app)
             .post(`/api/admin/disciplinas/${disciplinaResponse.body.id}/matriculas`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${loginResponse.body.token}`)
+            .set('Authorization', authorization)
             .send({
                 alunoId: alunoResponse.body.id,
             })

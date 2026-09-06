@@ -8,8 +8,8 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "tests": "npx mocha test --recursive",
-    "tests:internal": "npx mocha test/internal --recursive --reporter mochawesome --reporter-options reportDir=reports,reportFilename=internal-report",
-    "tests:external": "npx mocha test/external --recursive --reporter mochawesome --reporter-options reportDir=reports,reportFilename=external-report"
+    "tests:in": "npx mocha test/internal --recursive --reporter mochawesome --reporter-options reportDir=reports,reportFilename=internal-report",
+    "tests:ex": "npx mocha test/external --recursive --reporter mochawesome --reporter-options reportDir=reports,reportFilename=external-report"
   },
   "author": "",
   "license": "ISC",
