@@ -9,11 +9,37 @@ import { alunosFixture } from '../fixtures/alunos.js';
 
 describe('Disciplinas', () => {
 
-    let loginResponse;
-    let alunoResponse;
+    let loginResponse, alunoResponse, aluno;
+
     beforeEach(async () => {
         loginResponse = await loginUser(app, 'admin@escola.com', 'admin123');
-        alunoResponse = await createStudent(app, alunosFixture.aleatorio(), loginResponse);
+        const token = loginResponse.body.token;
+
+        aluno = alunosFixture.aleatorio();
+
+        // gestão de dados (pré-condição): se o aluno já existe, apaga antes de recriar
+        const listaResponse = await request(app)
+            .get('/api/admin/alunos')
+            .set('Authorization', `Bearer ${token}`);
+
+        const alunoExistente = listaResponse.body.find((a) => a.email === aluno.email);
+
+        if (alunoExistente) {
+            await request(app)
+                .delete(`/api/admin/alunos/${alunoExistente.id}`)
+                .set('Authorization', `Bearer ${token}`);
+        }
+
+        alunoResponse = await createStudent(app, aluno, loginResponse);
+    });
+
+    afterEach(async () => {
+        // gestão de dados (limpeza): garante que o aluno criado no teste seja apagado
+        if (alunoResponse?.body?.id) {
+            await request(app)
+                .delete(`/api/admin/alunos/${alunoResponse.body.id}`)
+                .set('Authorization', `Bearer ${loginResponse.body.token}`);
+        }
     });
 
     it('devo conseguir matricular um aluno novo a uma disciplina nova', async () => {
