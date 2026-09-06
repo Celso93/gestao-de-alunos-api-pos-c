@@ -4,7 +4,8 @@ import request from 'supertest';
 
 import { comTokenDoAdmin } from '../helpers/auth.js';
 import { createStudent } from '../helpers/alunos.js';
-import { alunosFixture } from '../fixtures/alunos.js';
+import { novoAluno } from '../factories/alunosFactory.js';
+import { novaDisciplina } from '../factories/disciplinasFactory.js';
 
 
 describe('Disciplinas', () => {
@@ -14,7 +15,7 @@ describe('Disciplinas', () => {
     beforeEach(async () => {
         authorization = await comTokenDoAdmin(app);
 
-        aluno = alunosFixture.aleatorio();
+        aluno = novoAluno();
 
         // gestão de dados (pré-condição): se o aluno já existe, apaga antes de recriar
         const listaResponse = await request(app)
@@ -47,11 +48,7 @@ describe('Disciplinas', () => {
             .set('Content-Type', 'application/json')
             .set('Authorization', authorization)
             .expect(201)
-            .send({
-                nome: `Matemática${Date.now()}`,
-                codigo: `MAT${Date.now()}`,
-                cargaHoraria: 80
-            })
+            .send(novaDisciplina())
 
         const matriculaResponse = await request(app)
             .post(`/api/admin/disciplinas/${disciplinaResponse.body.id}/matriculas`)
