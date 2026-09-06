@@ -13,6 +13,10 @@ jobs:
   Build:
     runs-on: ubuntu-latest
 
+    env:
+      ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -21,10 +25,7 @@ jobs:
           node-version: latest
 
       - name: Instalando dependências
-        run: npm install &
-      
-      - name: Instalando dependências
-        run: sleep 5
+        run: npm ci
 
-      - name: Executando os testes de API
+      - name: Executando os testes internos de API
         run: npm run tests:in
