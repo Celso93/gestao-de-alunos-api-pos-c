@@ -4,6 +4,7 @@ import request from 'supertest';
 
 import { comTokenDoAdmin } from '../helpers/auth.js';
 import { createStudent } from '../helpers/alunos.js';
+import { createDiscipline, enrollStudent } from '../helpers/disciplinas.js';
 import { novoAluno } from '../factories/alunosFactory.js';
 import { novaDisciplina } from '../factories/disciplinasFactory.js';
 
@@ -43,20 +44,15 @@ describe('Disciplinas', () => {
     });
 
     it('devo conseguir matricular um aluno novo a uma disciplina nova', async () => {
-        const disciplinaResponse = await request(app)
-            .post('/api/admin/disciplinas')
-            .set('Content-Type', 'application/json')
-            .set('Authorization', authorization)
-            .expect(201)
-            .send(novaDisciplina())
+        const disciplinaResponse = await createDiscipline(novaDisciplina(), authorization, app);
+        expect(disciplinaResponse.status).to.equal(201);
 
-        const matriculaResponse = await request(app)
-            .post(`/api/admin/disciplinas/${disciplinaResponse.body.id}/matriculas`)
-            .set('Content-Type', 'application/json')
-            .set('Authorization', authorization)
-            .send({
-                alunoId: alunoResponse.body.id,
-            })
+        const matriculaResponse = await enrollStudent(
+            disciplinaResponse.body.id,
+            alunoResponse.body.id,
+            authorization,
+            app
+        );
 
         expect(matriculaResponse.status).to.equal(201);
         expect(matriculaResponse.body).to.have.property('alunoId', alunoResponse.body.id);
