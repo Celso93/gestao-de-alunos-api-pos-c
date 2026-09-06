@@ -1,8 +1,7 @@
-import app from '../../src/app.js';
 import { expect } from 'chai';
-import request from 'supertest';
+import {api} from '../helpers/api.js';
 
-import { loginUser } from '../helpers/auth.js';
+import { comTokenDoAdmin } from '../helpers/auth.js';
 import { createStudent } from '../helpers/alunos.js';
 import { alunosFixture } from '../fixtures/alunos.js';
 
@@ -12,15 +11,15 @@ describe('Disciplinas', () => {
     let loginResponse, alunoResponse;
 
     beforeEach(async () => {
-        loginResponse = await loginUser('http://localhost:3000', 'admin@escola.com', 'admin123');
-        alunoResponse = await createStudent('http://localhost:3000', alunosFixture.aleatorio(), loginResponse);
+        loginResponse = await comTokenDoAdmin();
+        alunoResponse = await createStudent(alunosFixture.aleatorio(), loginResponse);
     });
 
     it('devo conseguir matricular um aluno novo a uma disciplina nova', async () => {
-        const disciplinaResponse = await request('http://localhost:3000')
+        const disciplinaResponse = await api()
             .post('/api/admin/disciplinas')
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${loginResponse.body.token}`)
+            .set('Authorization', loginResponse)
             .expect(201)
             .send({
                 nome: `Matemática${Date.now()}`,
@@ -28,10 +27,10 @@ describe('Disciplinas', () => {
                 cargaHoraria: 80
             })
 
-        const matriculaResponse = await request('http://localhost:3000')
+        const matriculaResponse = await api()
             .post(`/api/admin/disciplinas/${disciplinaResponse.body.id}/matriculas`)
             .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${loginResponse.body.token}`)
+            .set('Authorization', loginResponse)
             .send({
                 alunoId: alunoResponse.body.id,
             })
